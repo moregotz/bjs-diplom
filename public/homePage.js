@@ -6,7 +6,7 @@ logoutButton.action = function () {
             location.reload();
         }
     });
-}
+};
 
 ApiConnector.current(function callback(result) {
     if (result.success) {
@@ -23,7 +23,8 @@ function getRates() {
             ratesBoard.fillTable(ratesResult.data);
         }
     });
-}
+};
+
 getRates();
 const ratesTimer = setInterval(getRates, 60000);
 
@@ -45,7 +46,7 @@ moneyManager.conversionMoneyCallback = function (data) {
             moneyManager.setMessage(convertResult.success, 'Конвертация валюты прошла успешно');
         } else moneyManager.setMessage(!convertResult.success, convertResult.error);
     });
-}
+};
 
 moneyManager.sendMoneyCallback = function (data) {
     ApiConnector.transferMoney(data, function callback(transferResult) {
@@ -54,16 +55,34 @@ moneyManager.sendMoneyCallback = function (data) {
             moneyManager.setMessage(transferResult.success, 'Перевод средств прошел успешно');
         } else moneyManager.setMessage(!transferResult.success, transferResult.error);
     });
-}
+};
 
 const favoritesWidget = new FavoritesWidget();
 
 ApiConnector.getFavorites(function callback(result) {
     if (result.success) {
         favoritesWidget.clearTable();
-        favoritesWidget.fillTable();
-        favoritesWidget.updateUsersList();
+        favoritesWidget.fillTable(result.data);
+        favoritesWidget.updateUsersList(result.data);
     }
 });
 
-favoritesWidget
+favoritesWidget.addUserCallback = function (data) {
+    ApiConnector.addUserToFavorites(data, function callback(addUserResult) {
+        if (addUserResult.success) {
+            favoritesWidget.clearTable();
+            favoritesWidget.fillTable(addUserResult.data);
+            favoritesWidget.setMessage(addUserResult.success, 'Пользователь добавлен в список избранного');
+        } else favoritesWidget.setMessage(!addUserResult.success, addUserResult.error);
+    });
+};
+
+favoritesWidget.removeUserCallback = function (data) {
+    ApiConnector.removeUserFromFavorites(data, function callback(removeUser) {
+        if (removeUser.success) {
+            favoritesWidget.clearTable();
+            favoritesWidget.fillTable(removeUser.data);
+            favoritesWidget.setMessage(removeUser.success, 'Пользователь удалён из списка избранного');
+        } else favoritesWidget.setMessage(!removeUser.success, removeUser.error);
+    });
+};
