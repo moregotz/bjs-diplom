@@ -73,6 +73,7 @@ favoritesWidget.addUserCallback = function (data) {
             favoritesWidget.clearTable();
             favoritesWidget.fillTable(addUserResult.data);
             favoritesWidget.setMessage(addUserResult.success, 'Пользователь добавлен в список избранного');
+            favoritesWidget.updateUsersList(addUserResult.data);
         } else favoritesWidget.setMessage(!addUserResult.success, addUserResult.error);
     });
 };
@@ -83,6 +84,7 @@ favoritesWidget.removeUserCallback = function (data) {
             favoritesWidget.clearTable();
             favoritesWidget.fillTable(removeUser.data);
             favoritesWidget.setMessage(removeUser.success, 'Пользователь удалён из списка избранного');
+            favoritesWidget.updateUsersList(removeUser.data);
         } else favoritesWidget.setMessage(!removeUser.success, removeUser.error);
     });
 };
